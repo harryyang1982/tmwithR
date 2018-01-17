@@ -78,7 +78,85 @@ library(widyr)
 title_word_pairs <- nasa_title %>% 
   pairwise_count(word, id, sort = T, upper = F)
 
+title_word_pairs
+desc_word_pairs <- nasa_desc %>% 
+  pairwise_count(word, id, sort = T, upper = F)
+
+desc_word_pairs
+
 library(igraph)
 library(ggraph)
 
 set.seed(1234)
+title_word_pairs %>% 
+  filter(n >= 250) %>% 
+  graph_from_data_frame() %>% 
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n, edge_width = n), edge_colour = "cyan4") +
+  geom_node_point(size = 5) +
+  geom_node_text(aes(label = name), repel = T,
+                 point.padding = unit(0.2, "lines")) +
+  theme_void()
+
+set.seed(1234)
+desc_word_pairs %>% 
+  filter(n >= 5000) %>% 
+  graph_from_data_frame() %>% 
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n, edge_width =n), edge_colour = "darkred") +
+  geom_node_point(size = 5) +
+  geom_node_text(aes(label = name), repel = T,
+                 point.padding = unit(0.2, "lines")) +
+  theme_void()
+
+## Networks of Keywords
+
+keyword_pairs <- nasa_keyword %>% 
+  pairwise_count(keyword, id, sort = T, upper = F)
+
+set.seed(1234)
+keyword_pairs %>% 
+  filter(n >= 700) %>% 
+  graph_from_data_frame() %>% 
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n, edge_width = n), edge_colour = "royalblue") +
+  geom_node_point(size = 5) +
+  geom_node_text(aes(label = name), repel = T,
+                 point.padding = unit(0.2, "lines")) +
+  theme_void()
+
+keyword_cors <- nasa_keyword %>% 
+  group_by(keyword) %>% 
+  filter(n() >= 50) %>% 
+  pairwise_cor(keyword, id, sort = T, upper = F)
+
+keyword_cors
+
+set.seed(1234)
+keyword_cors %>% 
+  filter(correlation > .6) %>% 
+  graph_from_data_frame() %>% 
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = correlation, edge_width = correlation),
+                 edge_colour = "royalblue") +
+  geom_node_point(size = 5) +
+  geom_node_text(aes(label = name), repel = T,
+                 point.padding = unit(0.2, "lines")) +
+  theme_void()
+
+# Calculating tf-idf for the Description Fields
+
+## What is tf-idf for the Description Field Words?
+
+desc_tf_idf <- nasa_desc %>% 
+  count(id, word, sort = T) %>% 
+  ungroup() %>% 
+  bind_tf_idf(word, id, n)
+
+desc_tf_idf %>% 
+  arrange(-tf_idf) %>% 
+  select(-id)
+
+## Connecting Description Fields to Keywords
+
+desc_tf_idf <- full_join(desc_tf_idf, nasa_keyword, by = "id")
