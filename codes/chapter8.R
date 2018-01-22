@@ -78,6 +78,12 @@ library(widyr)
 title_word_pairs <- nasa_title %>% 
   pairwise_count(word, id, sort = T, upper = F)
 
+title_word_pairs
+desc_word_pairs <- nasa_desc %>% 
+  pairwise_count(word, id, sort = T, upper = F)
+
+desc_word_pairs
+
 library(igraph)
 library(ggraph)
 
@@ -97,7 +103,11 @@ desc_word_pairs %>%
   filter(n >= 5000) %>% 
   graph_from_data_frame() %>% 
   ggraph(layout = "fr") +
+<<<<<<< HEAD
   geom_edge_link(aes(edge_alpha = n, edge_width = n), edge_colour = "darkred") +
+=======
+  geom_edge_link(aes(edge_alpha = n, edge_width =n), edge_colour = "darkred") +
+>>>>>>> 7363f62c1d2b0346a68f72b87c7749d6e437fcd2
   geom_node_point(size = 5) +
   geom_node_text(aes(label = name), repel = T,
                  point.padding = unit(0.2, "lines")) +
@@ -108,15 +118,23 @@ desc_word_pairs %>%
 keyword_pairs <- nasa_keyword %>% 
   pairwise_count(keyword, id, sort = T, upper = F)
 
+<<<<<<< HEAD
 keyword_pairs
 
 set_seed(1234)
+=======
+set.seed(1234)
+>>>>>>> 7363f62c1d2b0346a68f72b87c7749d6e437fcd2
 keyword_pairs %>% 
   filter(n >= 700) %>% 
   graph_from_data_frame() %>% 
   ggraph(layout = "fr") +
+<<<<<<< HEAD
   geom_edge_link(aes(edge_alpha = n, edge_width = n),
                  edge_colour = "royalblue") +
+=======
+  geom_edge_link(aes(edge_alpha = n, edge_width = n), edge_colour = "royalblue") +
+>>>>>>> 7363f62c1d2b0346a68f72b87c7749d6e437fcd2
   geom_node_point(size = 5) +
   geom_node_text(aes(label = name), repel = T,
                  point.padding = unit(0.2, "lines")) +
@@ -143,7 +161,11 @@ keyword_cors %>%
 
 # Calculating tf-idf for the Description Fields
 
+<<<<<<< HEAD
 ## What Is tf-idf for the Description Field Words?
+=======
+## What is tf-idf for the Description Field Words?
+>>>>>>> 7363f62c1d2b0346a68f72b87c7749d6e437fcd2
 
 desc_tf_idf <- nasa_desc %>% 
   count(id, word, sort = T) %>% 
@@ -157,6 +179,7 @@ desc_tf_idf %>%
 ## Connecting Description Fields to Keywords
 
 desc_tf_idf <- full_join(desc_tf_idf, nasa_keyword, by = "id")
+<<<<<<< HEAD
 
 desc_tf_idf %>% 
   filter(!near(tf, 1)) %>% 
@@ -281,3 +304,5 @@ top_keywords %>%
   scale_x_discrete(labels = function(x) gsub("__.+$", "", x)) +
   facet_wrap(~topic, ncol = 3, scales = "free")
 
+=======
+>>>>>>> 7363f62c1d2b0346a68f72b87c7749d6e437fcd2
