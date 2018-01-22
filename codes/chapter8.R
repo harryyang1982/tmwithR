@@ -304,5 +304,3 @@ top_keywords %>%
   scale_x_discrete(labels = function(x) gsub("__.+$", "", x)) +
   facet_wrap(~topic, ncol = 3, scales = "free")
 
-=======
->>>>>>> 7363f62c1d2b0346a68f72b87c7749d6e437fcd2
