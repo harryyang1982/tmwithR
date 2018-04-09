@@ -70,13 +70,15 @@ bigram_graph
 library(extrafont)
 
 fonts()
+font_import()
+
 a <- grid::arrow(type = "closed", length = unit(.15, "inches"))
 
-ggraph(bigram_graph, layout = "fr") +
+ggraph(bigram_graph, layout = "auto") +
   geom_edge_link(aes(edge_alpha = n), show.legend = F,
                  arrow = a, end_cap = circle(.07, 'inches')) +
   geom_node_point(color = "lightblue", size = 5) +
   geom_node_text(aes(label = name), vjust = 1, hjust = 1) +
-  theme_void() + 
-  theme_graph(base_family = "Apple Gothic")
+  theme_void()
+fonts()
 
