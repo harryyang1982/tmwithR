@@ -41,3 +41,42 @@ lda_top_terms %>%
   geom_col(show.legend = F) +
   facet_wrap(~topic, scales = "free") +
   coord_flip()
+
+# sna graph with bigram
+
+library(igraph)
+library(ggraph)
+set.seed(2017)
+
+bigram <- txt_df %>% 
+  unnest_tokens(bigram, text, token = "ngrams", n = 2)
+
+bigrams_separated <- bigram %>% 
+  separate(bigram, c("word1", "word2", sep = " "))
+
+bigrams_filtered <- bigrams_separated %>% 
+  filter(!word1 %in% myStopwords) %>% 
+  filter(!word2 %in% myStopwords)
+
+bigram_counts <- bigrams_filtered %>% 
+  count(word1, word2, sort = T)
+
+bigram_graph <- bigram_counts %>% 
+  filter(n > 20) %>% 
+  graph_from_data_frame()
+
+bigram_graph
+
+library(extrafont)
+
+fonts()
+a <- grid::arrow(type = "closed", length = unit(.15, "inches"))
+
+ggraph(bigram_graph, layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n), show.legend = F,
+                 arrow = a, end_cap = circle(.07, 'inches')) +
+  geom_node_point(color = "lightblue", size = 5) +
+  geom_node_text(aes(label = name), vjust = 1, hjust = 1) +
+  theme_void() + 
+  theme_graph(base_family = "Apple Gothic")
+
